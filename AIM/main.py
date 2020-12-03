@@ -5,19 +5,15 @@ Created on Wed Oct 21 00:48:15 2020
 @author: Sanatov Daulet
 """
 
-from python_speech_features import mfcc
+import os,pickle,random,operator,math
 import scipy.io.wavfile as wav
 import numpy as np
+from python_speech_features import mfcc
 from tempfile import TemporaryFile
-import os
-import pickle
-import random 
-import operator
-import math
-import numpy as np
 from collections import defaultdict
 
-dataset = []
+dataset = [] # intializae a empty list variable call dataset  
+
 def loadDataset(filename):
     with open("my.dat" , 'rb') as f:
         while True:
@@ -28,17 +24,18 @@ def loadDataset(filename):
                 break
 loadDataset("my.dat")
 
-def distance(instance1 , instance2 , k ):
+def distance(instance1,instance2,k):
     distance =0 
     mm1 = instance1[0] 
     cm1 = instance1[1]
     mm2 = instance2[0]
     cm2 = instance2[1]
-    distance = np.trace(np.dot(np.linalg.inv(cm2), cm1)) 
+    distance = np.trace(np.dot(np.linalg.inv(cm2), cm1)) # use trace method of numpy to do something
     distance+=(np.dot(np.dot((mm2-mm1).transpose() , np.linalg.inv(cm2)) , mm2-mm1 )) 
     distance+= np.log(np.linalg.det(cm2)) - np.log(np.linalg.det(cm1))
     distance-= k
     return distance
+    
 def getNeighbors(trainingSet , instance , k):
     distances =[]
     for x in range (len(trainingSet)):
@@ -48,7 +45,8 @@ def getNeighbors(trainingSet , instance , k):
     neighbors = []
     for x in range(k):
         neighbors.append(distances[x][0])
-    return neighbors  
+    return neighbors
+
 def nearestClass(neighbors):
     classVote ={}
     for x in range(len(neighbors)):
